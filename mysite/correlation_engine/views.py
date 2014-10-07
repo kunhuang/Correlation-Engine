@@ -10,7 +10,6 @@ import json
 import numpy
 import pdb
 import math
-import math
 
 file_directory = 'correlation_engine/file/'
 # converting the the correlation matrix result
@@ -142,7 +141,6 @@ def calculate(request):
       if(request.POST.get('option_data_mode') == 'data_by_row'):
         matrix = map(list, zip(*matrix))
 
-
       data = {'labels':matrix[0],'dataset':matrix[1:]}
       myfile1.close()
       
@@ -152,6 +150,7 @@ def calculate(request):
       np_data = np_data[:,index].astype(numpy.float)
       
       result = numpy.zeros((len(index), len(index), 2))
+      
       for i in range(len(index)):
         for j in range(len(index)):
           if i != j:

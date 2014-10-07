@@ -155,7 +155,8 @@
                 <option value="data_by_row">Data by Row</option>
               </select>
               <div id="option_data"></div>
-            </p>Use "Ctrl" or "Command" to select multiple item</p>
+            </p>Use "Ctrl" or "Command" to select multiple item,</p>
+            <p>or drag&drop items to "Drop Area"(supported in Firefox 32.0.3)</p>
             </div>
           </div>
           <center>
@@ -437,8 +438,8 @@
   {
     d3.select("#preview").append("div").attr("id","preview_svg")
 
-    var m = {'top':20, 'bottom':20, 'left':50, 'right':20},
-    w = 400,
+    var m = {'top':20, 'bottom':20, 'left':100, 'right':20},
+    w = 700,
     h = 200,
     x_tickSize = preview[0]['x_labels'].length
 
@@ -465,7 +466,7 @@
     var line = d3.svg.line()
         .x(function(d, i) { return x(i); })
         .y(function(d) { return y(d); })
-        .interpolate("linear");
+        // .interpolate("basis");
 
     var svg = d3.select('#preview_svg')
                 .selectAll('svg')
@@ -830,7 +831,7 @@
   function many_many_graph_mode()
   {
     var w = 1000,
-        h = 600,
+        h = 550,
         m = {'top':30, 'bottom':100, 'left':50, 'right':100},
         innerPadding = 0.1,
         outPadding = 0.1,
