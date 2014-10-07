@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>option</title>
+  <script type="text/javascript">
+  // var num = 10;
+  // var dataset = new Array(num);
+  // for (var i = 0; i < num; i++) 
+  // {
+  //   dataset[i] = new Array(num);
+  //   for (var j = 0; j < num; j++)
+  //     dataset[i][j] = [2*Math.random()-1, Math.random(), Math.floor((Math.random() * 10) + 1)];
+  // };
+  // var labels = new Array(num);
+  // for (var i = 0; i < 10; i++) {
+  //   labels[i] = 'X'+i;
+  // };
+  var labels = new Array();
+  labels={%data%}
+  </script>
+</head>
+
+<body>
+  <script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
+
+  <div id="options">
+    <h2>options</h2>
+    <ul>
+
+      <li>mode
+        <div>
+          <select name="" id="mode" onchange="change_mode(this.value)">
+            <option value="one-one">one-one</option>
+            <option value="one-many">one-many</option>
+            <option value="many-many">many-many</option>
+          </select>
+        </div>
+      </li>
+
+      <li>algorithm
+        <div>
+          <select name="" id="algorithm">
+            <option value="Pearson">Pearson</option>
+          </select>
+        </div>
+      </li>
+
+      <li>data
+        <div id="option_data"></div>
+      </li>
+    </ul>
+      <input type="button" value="submit">
+    </div>
+
+    <script type="text/javascript">
+    function one_one()
+    {
+      var data1_select = d3.select("#option_data").append("select").attr("id", "data1")
+      data1_select.selectAll("option").data(labels).enter()
+      .append("option")
+      .attr("value", function(d){return d; })
+      .text(function(d){return d; })
+      
+      var data2_select = d3.select("#option_data").append("select").attr("id", "data2")
+      data2_select.selectAll("option").data(labels).enter()
+      .append("option")
+      .attr("value", function(d){return d; })
+      .text(function(d){return d; })
+    }
+    function one_many()
+    {
+      var data1_select = d3.select("#option_data").append("select").attr("id", "data1")
+      data1_select.selectAll("option").data(labels).enter()
+      .append("option")
+      .attr("value", function(d){return d; })
+      .text(function(d){return d; })
+
+      var data2_select = d3.select("#option_data").append("select").attr("multiple","").attr("size", "15").attr("id", "data2")
+      data2_select.selectAll("option").data(labels).enter()
+      .append("option")
+      .attr("selected","")
+      .attr("value", function(d){return d; })
+      .text(function(d){return d; })      
+    }
+    function many_many()
+    {
+      var data_select = d3.select("#option_data").append("select").attr("multiple","").attr("size", "15").attr("id", "data")
+      data_select.selectAll("option").data(labels).enter()
+      .append("option")
+      .attr("selected","")
+      .attr("value", function(d){return d; })
+      .text(function(d){return d; })      
+    }
+    function change_mode(mode)
+    {
+      if(data=document.getElementById("data1"))
+        data.remove()
+      if(data=document.getElementById("data2"))
+        data.remove()
+      if(data=document.getElementById("data"))
+        data.remove()
+      
+      if (mode=="one-one") {one_one();}
+      else if(mode=="one-many") {one_many();}
+      else if(mode=="many-many") {many_many();}
+    }
+    one_one()
+
+    </script>
+
+  </body>
+
+  </html>

@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Result:many-many</title>
+  <script type="text/javascript">
+    var num = 10;
+    var dataset = new Array(num);
+    for (var i = 0; i < num; i++) 
+    {
+      dataset[i] = new Array(num);
+      for (var j = 0; j < num; j++)
+        dataset[i][j] = [2*Math.random()-1, Math.random(), Math.floor((Math.random() * 10) + 1)];
+    };
+    var labels = new Array(num);
+    for (var i = 0; i < 10; i++) {
+      labels[i] = 'X'+i;
+    };
+    // var dataset = [
+    // [1, 2, 3], 
+    // [1, 2, 3], 
+    // [1, 2, 3], 
+    // [1, 2, 3], 
+    // [1, 2, 3], 
+    // [4, 5, 6]];
+
+  </script>
+</head>
+
+<body>
+  <script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
+  
+  <select id="mode" onchange="checkField(this.value)">
+    <option value="graph_mode">graph_mode</option>
+    <option value="text_mode">text_mode</option>
+  </select>
+
+  <script type="text/javascript">
+  function checkField(mode)
+  {
+    if(result=document.getElementById("result"))
+      result.remove()
+    
+    if (mode == "text_mode") {text_mode()}
+    else if(mode == "graph_mode") {graph_mode()}
+  }
+  function text_mode()
+  {
+    var tr = d3.select("body").append("div").attr("id", "result").append("table").attr("border", "1")
+      .selectAll("tr")
+      .data(dataset).enter().append("tr")
+      
+    var td = tr.selectAll("td")
+      .data(function(d){return d; })
+      .enter().append("td").append("pre").text(function(d){return d[0].toFixed(2)+'\n'+d[1].toFixed(2);})
+
+    d3.select("#result").select("table").insert("tr","tr").selectAll("td").data(labels).enter().append("td").text(function(d){return d;})
+    d3.select("#result").select("table").selectAll("tr").insert("td", "td").data(labels).enter().text(function(d){return d;})
+  }
+  function graph_mode()
+  {
+    // var tr = d3.select("body").append("div").attr("id", "result").append("table").selectAll("tr")
+    //   .data(dataset).enter().append("tr")
+      
+    // var td = tr.selectAll("td")
+    //   .data(function(d){return d; })
+    //   .enter().append("td")
+
+    // var circles = td.append("svg").append("circle")
+    
+    // circles.attr("r", function(d){return d; })
+    var svg = d3.select("body").append("div").attr("id", "result").append("svg")
+    var row = svg.selectAll("g").data(dataset).enter().append("g")
+      .attr("transform", function(d, i) { return "translate(0," + (i+1)*20 + ")"; })
+    
+    var circles = row.selectAll("circle").data(function(d){return d; }).enter().append("circle")
+    circles.attr('r', function(d){return Math.abs(d[0]*10); })
+    .attr('fill', function(d){
+      if(d[0]>0) return 'green';
+      else return 'red';
+    })
+    .attr('cx', function(d, i){return (i+1)*20; })
+    .append("svg:title").text(function(d){return d; })
+  }
+  graph_mode()
+  </script>
+</body>
+
+</html>

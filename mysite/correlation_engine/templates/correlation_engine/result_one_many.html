@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Result:one-many</title>
+  <script type="text/javascript">
+    var num = 10;
+    var dataset = new Array(num);
+    for (var i = 0; i < num; i++) 
+    {
+      dataset[i]= [2*Math.random()-1, Math.random(), Math.floor((Math.random() * 10) + 1)];
+    };
+    var label1 = 'X10';
+    var labels = new Array(num);
+    for (var i = 0; i < 10; i++) {
+      labels[i] = 'X'+i;
+    };
+    // var dataset = [
+    // [1, 2, 3], 
+    // [1, 2, 3], 
+    // [1, 2, 3], 
+    // [1, 2, 3], 
+    // [1, 2, 3], 
+    // [4, 5, 6]];
+
+  </script>
+</head>
+
+<body>
+  <script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
+  
+  <select id="mode" onchange="checkField(this.value)">
+    <option value="graph_mode">graph_mode</option>
+    <option value="text_mode">text_mode</option>
+  </select>
+
+  <script type="text/javascript">
+  function checkField(mode)
+  {
+    if(result=document.getElementById("result"))
+      result.remove()
+    
+    if (mode == "text_mode") {text_mode()}
+    else if(mode == "graph_mode") {graph_mode()}
+  }
+  function text_mode()
+  {
+    var tr = d3.select("body").append("div").attr("id", "result").append("table").attr("border", "1")
+      .append("tr")
+
+    var td = tr.selectAll("td")
+      .data(dataset)
+      .enter().append("td").append("pre").text(function(d){return d[0].toFixed(2)+'\n'+d[1].toFixed(2);})
+
+    d3.select("#result").select("table").insert("tr","tr").selectAll("td").data(labels).enter().append("td").text(function(d){return d;})
+    // d3.select("#result").select("table").selectAll("tr").insert("td", "td").data(labels).enter().text(function(d){return d;})
+  }
+  function graph_mode()
+  {
+      //Width and height
+      var w = 400;
+      var h = 400;
+      var barPadding = 1;
+
+      //Scale
+      var x = d3.scale.ordinal().rangeRoundBands([0, w], .05);
+      var y = d3.scale.linear().range([h/2, 0]);
+
+      x.domain(labels.map(function(d) { return d; }));
+      y.domain([0, 1]);
+
+      //Create SVG element
+      var svg = d3.select("body")
+            .append("div").attr("id", "result")
+            .append("svg")
+            .attr("width", w)
+            .attr("height", h);
+
+      
+      var xAxis = d3.svg.axis()
+          .scale(x)
+          .orient("bottom")
+          .ticks(10);
+
+      var yAxis = d3.svg.axis()
+          .scale(y)
+          .orient("left")
+          .ticks(10);
+
+      svg.append("g")
+          .attr("class", "x axis")
+          .attr("transform", "translate(0," + h + ")")
+          .call(xAxis)
+        .selectAll("text")
+          .style("text-anchor", "end")
+          .attr("dx", "-.8em")
+          .attr("dy", "-.55em")
+          .attr("transform", "rotate(-90)" );
+
+      svg.append("g")
+          .attr("class", "y axis")
+          .call(yAxis)
+        .append("text")
+          .attr("transform", "rotate(-90)")
+          .attr("y", 6)
+          .attr("dy", ".71em")
+          .style("text-anchor", "end")
+          .text("Value ($)");
+
+      // svg.selectAll("rect")
+      //    .data(dataset)
+      //    .enter()
+      //    .append("rect")
+      //    .attr("x", function(d, i) {
+      //       return i * (w / dataset.length);
+      //    })
+      //    .attr("y", function(d) {
+      //     if(d[0]>0)
+      //       return h/2 - y(d[0]);
+      //     else
+      //       return h/2;
+      //    })
+      //    .attr("width", w / dataset.length - barPadding)
+      //    .attr("height", function(d) {
+      //       return y(Math.abs(d[0]));
+      //    })
+      //    .attr("fill", function(d) {
+      //     if(d[0]>0) return 'green';
+      //     else return 'red'
+      //    });
+
+      // svg.selectAll("text")
+      //    .data(dataset)
+      //    .enter()
+      //    .append("text")
+      //    .text(function(d) {
+      //       return d[0];
+      //    })
+      //    .attr("text-anchor", "middle")
+      //    .attr("x", function(d, i) {
+      //       return i * (w / dataset.length) + (w / dataset.length - barPadding) / 2;
+      //    })
+      //    .attr("y", function(d) {
+      //       return h - (d[0] * 4) + 14;
+      //    })
+      //    .attr("font-family", "sans-serif")
+      //    .attr("font-size", "11px")
+      //    .attr("fill", "white");
+  
+      }
+  graph_mode()
+  </script>
+</body>
+
+</html>
