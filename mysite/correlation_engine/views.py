@@ -13,15 +13,21 @@ import math
 
 file_directory = 'correlation_engine/file/'
 # converting the the correlation matrix result
-def spec_convert(l):
-  for i, row in enumerate(l):
-    for j, column in enumerate(row):
-      if i == j:
-        l[i][j] = str('self')
-      else:
-        for k, item in enumerate(column):
-          if math.isnan(item):
-            l[i][j] = str('nan')
+def spec_convert(l, dim = 2):
+  if dim == 2:
+    for i, row in enumerate(l):
+      for j, column in enumerate(row):
+        if i == j:
+          l[i][j] = str('self')
+        else:
+          for k, item in enumerate(column):
+            if math.isnan(item):
+              l[i][j] = str('nan')
+  elif dim == 1:
+    for i, row in enumerate(l):
+      for k, item in enumerate(row):
+        if math.isnan(item):
+          l[i] = str('nan')
   return l
 
 def index(request):
@@ -125,11 +131,11 @@ def calculate(request):
       
       np_data1 = numpy.array(data['dataset'])[:,index1].astype(numpy.float)
       np_data2 = numpy.array(data['dataset'])[:,index2].astype(numpy.float)
-      
       result = numpy.zeros((len(index2), 2))
       for i in range(len(index2)):
-        result[i] = map(spec_convert, pearsonr(np_data1, np_data2[:,i]))
+        result[i] = pearsonr(np_data1[:,0], np_data2[:,i])
       result = result.tolist()
+      result = spec_convert(result, 1)
       # result = [[0.6, 0.5], [-.3, 0.1]];
     elif request.POST['option_mode'] == 'many_many':
       myfile1 = open(file_directory+client+file_type, 'rU')
