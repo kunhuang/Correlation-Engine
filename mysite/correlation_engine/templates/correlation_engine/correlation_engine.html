@@ -55,7 +55,7 @@
     width: 200px;
     height: auto;
     padding: 10px;
-    background-color: white;
+    background-color: black;
     -webkit-border-radius: 10px;
     -moz-border-radius: 10px;
     border-radius: 10px;
@@ -68,13 +68,10 @@
   #tooltip.hidden {
     display: none;
   }
-
-  #tooltip#value text {
-    margin: 0;
-    font-family: sans-serif;
-    font-size: 12px;
-    line-height: 20px;
+  #tooltip p{
+    color: white;
   }
+
   </style>
 
   <div id="main" class="row"><!-- INPUT FILE-->
@@ -835,7 +832,7 @@
         m = {'top':30, 'bottom':100, 'left':50, 'right':100},
         innerPadding = 0.1,
         outPadding = 0.1,
-        legendRange = d3.range(-1, 1, 0.1);
+        legendRange = d3.range(-1, 1.1, 0.1);
     // Scale
     result = result.slice(1).map(function(row, i){return row.slice(0,i+1)})
     var cx = d3.scale.ordinal()
@@ -887,6 +884,7 @@
             .attr("height", h)
             
     var background = svg.append("rect")
+                        .classed("svg-background", true)
                         .attr('x', m['left'])
                         .attr('y', m['top'])
                         .attr('width', w - m['left'] - m['right'])
@@ -922,40 +920,67 @@
        })
       .attr('fill', function(d){
         if(d == 'nan')
-          return 'orange'
+          return '#FF9900'
         else if(d == 'self')
           return '#B8B8B8'
         else
           return color(d[0])
       })
       .on("mouseover", function(d, col){
-         //highlight text
-         var row = d3.select(this.parentNode).attr('row')
-         d3.select(this).classed("cell-hover",true);
-         d3.selectAll("#result svg .y.axis .tick text").classed("text-highlight",function(r, ri){ return ri==row;});
-         d3.selectAll("#result svg .x.axis .tick text").classed("text-highlight",function(c, ci){ return ci==col;});
+        //highlight text
+        var rect_under_mouse = this
+        var row = d3.select(this.parentNode).attr('row')
+        d3.select(this).classed("cell-hover",true);
+        d3.selectAll("#result svg .y.axis .tick text").classed("text-highlight",function(r, ri){ return ri==row;});
+        d3.selectAll("#result svg .x.axis .tick text").classed("text-highlight",function(c, ci){ return ci==col;});
   
-         //Update the tooltip position and value
-         var tooltip = d3.select("#tooltip")
-                         .style("poisition", "absolute")
-                         .style("left", (d3.event.pageX+10) + "px")
-                         .style("top", (d3.event.pageY-10) + "px")
-                         .select("#value")   
-         if(d == 'nan')
-            tooltip.text(selected_series_names[row]+","+selected_series_names[col]+"  Correlation:NaN");
-          else  
-            tooltip.text(selected_series_names[row]+","+selected_series_names[col]+"  Correlation:"+d[0].toFixed(4)+"  P_value:"+d[1].toFixed(4));  
-            
-         //Show the tooltip
-         d3.select("#tooltip").classed("hidden", false);
+        //Update the tooltip position and value
+        var tooltip = d3.select("#tooltip")
+                        .style("poisition", "absolute")
+                        .style("left", (d3.event.pageX+10) + "px")
+                        .style("top", (d3.event.pageY-10) + "px")
+        if(d == 'nan')
+        {
+          tooltip.append("p").text(selected_series_names[row]+","+selected_series_names[col])
+          tooltip.append("p").text("Correlation:NaN")
+        }
+        else
+        {
+          tooltip.append("p").text(selected_series_names[row]+","+selected_series_names[col])
+          tooltip.append("p").text("Correlation:"+d[0].toFixed(4))
+          tooltip.append("p").text("P_value:"+d[1].toFixed(4))
+        }  
+        //Show the tooltip
+        d3.select("#tooltip").classed("hidden", false);
+
+        d3.select("#result #result_graph svg")
+          .selectAll("rect:not(.svg-background)")
+          .style('opacity',function () {
+            return (this === rect_under_mouse) ? 1.0 : 0.3;
+          });
+        // d3.select(this).attr("fill",lighterColor(d3.select(this).attr("fill"), 0.2))
+        // console.log(d3.select(this).attr("fill"))
+        // //Make other rect darker
+        // var rects = d3.select("#result #result_graph svg")
+        //               .selectAll("rect:not(.svg-background)")
+        // rects.each(function(d){
+        //   d3.select(this).attr("fill",darkerColor(d3.select(this).attr("fill"), 0.2))
+        // })
       })
       .on("mouseout", function(){
-         d3.select(this).classed("cell-hover",false);
-         d3.selectAll(".y.axis .tick text").classed("text-highlight",false);
-         d3.selectAll(".x.axis .tick text").classed("text-highlight",false);
-         d3.select("#tooltip").classed("hidden", true);
-      })
-      ;
+        d3.select(this).classed("cell-hover",false);
+        d3.selectAll(".y.axis .tick text").classed("text-highlight",false);
+        d3.selectAll(".x.axis .tick text").classed("text-highlight",false);
+        $("#tooltip p").remove()
+        d3.select("#tooltip").classed("hidden", true);
+     
+        // Recompense the color of other rect
+        d3.select("#result #result_graph svg")
+          .selectAll("rect:not(.svg-background)")
+          .style('opacity', function(){
+            return 1.0;
+          });
+      });
 
     // CIRLCLE MODE
 
@@ -1016,7 +1041,7 @@
           .style("fill", function(d, i) { return color(d); });
    
     legend.append("text")
-          .text(function(d) { return d; })
+          .text(function(d, i) { if(i%2 == 0)return d; })
           // .attr("width", legendElementWidth)
           .attr("x", w - m['right']/1.5 + m['right']/4)
           .attr("y", function(d, i) { return legendy(i) + legendy.rangeBand()/2; })
@@ -1030,7 +1055,7 @@
               .attr("y", legendy(legendRange.length-1)-2*legendy.rangeBand())
               .attr("width", m['right']/4)
               .attr("height", legendy.rangeBand())
-              .style("fill", "orange");
+              .style("fill", "#FF9900");
 
     nan_legend.append("text")
               .text("NaN")
@@ -1065,6 +1090,88 @@
     calculate(drag_event=true)
     make_preview(drag_event=true)
   }
+
+
+var pad = function(num, totalChars) {
+  var pad = '0';
+  num = num + '';
+  while (num.length < totalChars) {
+      num = pad + num;
+  }
+  return num;
+};
+
+// Ratio is between 0 and 1
+var changeColor = function(color, ratio, darker) {
+  // Trim trailing/leading whitespace
+  color = color.replace(/^\s*|\s*$/, '');
+
+  // Expand three-digit hex
+  color = color.replace(
+      /^#?([a-f0-9])([a-f0-9])([a-f0-9])$/i,
+      '#$1$1$2$2$3$3'
+  );
+
+  // Calculate ratio
+  var difference = Math.round(ratio * 256) * (darker ? -1 : 1),
+      // Determine if input is RGB(A)
+      rgb = color.match(new RegExp('^rgba?\\(\\s*' +
+          '(\\d|[1-9]\\d|1\\d{2}|2[0-4][0-9]|25[0-5])' +
+          '\\s*,\\s*' +
+          '(\\d|[1-9]\\d|1\\d{2}|2[0-4][0-9]|25[0-5])' +
+          '\\s*,\\s*' +
+          '(\\d|[1-9]\\d|1\\d{2}|2[0-4][0-9]|25[0-5])' +
+          '(?:\\s*,\\s*' +
+          '(0|1|0?\\.\\d+))?' +
+          '\\s*\\)$'
+      , 'i')),
+      alpha = !!rgb && rgb[4] != null ? rgb[4] : null,
+
+      // Convert hex to decimal
+      decimal = !!rgb? [rgb[1], rgb[2], rgb[3]] : color.replace(
+          /^#?([a-f0-9][a-f0-9])([a-f0-9][a-f0-9])([a-f0-9][a-f0-9])/i,
+          function() {
+              return parseInt(arguments[1], 16) + ',' +
+                  parseInt(arguments[2], 16) + ',' +
+                  parseInt(arguments[3], 16);
+          }
+      ).split(/,/),
+      returnValue;
+
+  // Return RGB(A)
+  return !!rgb ?
+      'rgb' + (alpha !== null ? 'a' : '') + '(' +
+          Math[darker ? 'max' : 'min'](
+              parseInt(decimal[0], 10) + difference, darker ? 0 : 255
+          ) + ', ' +
+          Math[darker ? 'max' : 'min'](
+              parseInt(decimal[1], 10) + difference, darker ? 0 : 255
+          ) + ', ' +
+          Math[darker ? 'max' : 'min'](
+              parseInt(decimal[2], 10) + difference, darker ? 0 : 255
+          ) +
+          (alpha !== null ? ', ' + alpha : '') +
+          ')' :
+      // Return hex
+      [
+          '#',
+          pad(Math[darker ? 'max' : 'min'](
+              parseInt(decimal[0], 10) + difference, darker ? 0 : 255
+          ).toString(16), 2),
+          pad(Math[darker ? 'max' : 'min'](
+              parseInt(decimal[1], 10) + difference, darker ? 0 : 255
+          ).toString(16), 2),
+          pad(Math[darker ? 'max' : 'min'](
+              parseInt(decimal[2], 10) + difference, darker ? 0 : 255
+          ).toString(16), 2)
+      ].join('');
+  };
+var lighterColor = function(color, ratio) {
+    return changeColor(color, ratio, false);
+};
+var darkerColor = function(color, ratio) {
+    return changeColor(color, ratio, true);
+};
 
   </script>
 </body>
