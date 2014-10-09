@@ -106,7 +106,7 @@
         <br>
         <input type="file" id="data_file" name="data_file" />
         <p>(.csv file supported)</p>
-        <input type="button" class="btn btn-info" value="upload" onclick="upload()" />
+        <input type="button" id="upload" class="btn btn-info" value="upload" onclick="upload()" />
       </div>
       
       <!-- PARSER -->
@@ -271,6 +271,9 @@
 
   function upload() 
   {
+    $("#upload").val("uploading...")
+                .addClass("disabled");
+    
     var file = document.getElementById("data_file");
 
     /* Create a FormData instance */
@@ -300,6 +303,8 @@
         $("#option_data_mode").val('data_by_column')
         $("#option_mode").val('many_many')
         change_mode('many_many')
+        $("#upload").val("upload")
+                    .removeClass("disabled");
         alert("upload successfully!")
       }
       else
@@ -918,14 +923,6 @@
       .attr('height', function(d){
         return cy.rangeBand();
        })
-      .attr('fill', function(d){
-        if(d == 'nan')
-          return '#FF9900'
-        else if(d == 'self')
-          return '#B8B8B8'
-        else
-          return color(d[0])
-      })
       .on("mouseover", function(d, col){
         //highlight text
         var rect_under_mouse = this
@@ -980,7 +977,20 @@
           .style('opacity', function(){
             return 1.0;
           });
-      });
+      })
+      .attr('fill', function(d){
+        if(d == 'nan')
+          return '#FF9900'
+        else if(d == 'self')
+          return '#B8B8B8'
+        else
+          return color(d[0])
+      })
+      .style("opacity", 0)
+      .transition()
+      .duration(1000)
+      .style("opacity", 1)
+      ;
 
     // CIRLCLE MODE
 
