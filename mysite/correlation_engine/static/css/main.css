@@ -1,0 +1,51 @@
+  .axis text {
+    font: 12px sans-serif;
+  }
+
+  .axis path, .axis line {
+    fill: none;
+    stroke: #000;
+    shape-rendering: crispEdges;
+  }
+  rect.cell-hover {
+    stroke: #F00;
+    stroke-width:0.3px;   
+  }
+
+  text.text-highlight {
+    fill: #c00;
+  }
+  #main {
+    margin: 5%;
+  }
+  .box {
+    border-color: #ddd;
+    border-width: 2px;
+    border-radius: 4px 4px 0 0;
+    border-style: solid;
+    /*margin: 20px;*/
+    padding: 20px;
+    overflow: scroll;
+  }
+  #tooltip {
+    position: absolute;
+    z-index: 1;
+    width: 200px;
+    height: auto;
+    padding: 10px;
+    background-color: black;
+    -webkit-border-radius: 10px;
+    -moz-border-radius: 10px;
+    border-radius: 10px;
+    -webkit-box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.4);
+    -moz-box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.4);
+    box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.4);
+    pointer-events: none;
+  }
+
+  #tooltip.hidden {
+    display: none;
+  }
+  #tooltip p{
+    color: white;
+  }

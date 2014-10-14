@@ -31,7 +31,7 @@ def spec_convert(l, dim = 2):
   return l
 
 def index(request):
-  return render_to_response('correlation_engine/correlation_engine.html')
+  return render_to_response('correlation_engine/correlation_engine.html',  context_instance=RequestContext(request))
   
 @csrf_exempt
 def option(request):
