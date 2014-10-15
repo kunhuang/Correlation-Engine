@@ -13,22 +13,22 @@ import math
 
 file_directory = 'correlation_engine/file/'
 # converting the the correlation matrix result
-def spec_convert(l, dim = 2):
+def spec_convert(lst, dim = 2):
   if dim == 2:
-    for i, row in enumerate(l):
+    for i, row in enumerate(lst):
       for j, column in enumerate(row):
         if i == j:
-          l[i][j] = str('self')
+          lst[i][j] = str('self')
         else:
           for k, item in enumerate(column):
             if math.isnan(item):
-              l[i][j] = str('nan')
+              lst[i][j] = str('nan')
   elif dim == 1:
-    for i, row in enumerate(l):
+    for i, row in enumerate(lst):
       for k, item in enumerate(row):
         if math.isnan(item):
-          l[i] = str('nan')
-  return l
+          lst[i] = str('nan')
+  return lst
 
 def index(request):
   return render_to_response('correlation_engine/correlation_engine.html',  context_instance=RequestContext(request))
@@ -96,18 +96,19 @@ def calculate(request):
         result["max_correlation"] = 0
         for i in range(-l+1, l-1):
           if i < 0:
-            correlation = spec_convert(pearsonr(np_data1[range(-i,l), :], np_data2[range(0, i+l),:])[0][0])
+            correlation = pearsonr(np_data1[range(-i,l), :], np_data2[range(0, i+l),:])[0][0]
           else:
-            correlation = spec_convert(pearsonr(np_data1[range(0,l-i), :], np_data2[range(i, l),:])[0][0])
+            correlation = pearsonr(np_data1[range(0,l-i), :], np_data2[range(i, l),:])[0][0]
 
+          
           if(numpy.isnan(correlation) == True):
             correlation = 0
-         
+      
           if(abs(correlation) > result["max_correlation"]):
             result["max_correlation"] = abs(correlation)
             result["lag"] = i
           result['cross_correlation'].append([i, correlation])
-      
+        
       return HttpResponse(json.dumps(result))
     elif request.POST['option_mode'] == 'one_many':
       myfile1 = open(file_directory+client+file_type, 'rU')

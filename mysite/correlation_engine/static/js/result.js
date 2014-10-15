@@ -5,9 +5,8 @@ function one_one_text_mode()
                   .append("svg").attr("id","result_graph")
 
   var m = {'top':60, 'bottom':60, 'left':100, 'right':100},
-  w = 1000,
-  h = 300,
-  x_tickSize = preview[0]['x_labels'].length
+      w = 1000,
+      h = 300;
 
   var x = d3.scale.linear().range([m['left'], w - m['right']]);
   x.domain([d3.min(result['cross_correlation'], function(d){return d[0]}),
@@ -48,6 +47,35 @@ function one_one_text_mode()
       .attr("stroke", "blue")
       .attr("stroke-width", 2)
       .attr("fill", "none");
+  // hightlight the max correlation coefficient
+  var max_point;
+  result['cross_correlation'].forEach(function(d, i){
+    if(d[0] == result['lag'])
+      max_point = [d[0], d[1]]
+  })
+
+  svg.append('svg:circle')
+      .attr('cx', x(max_point[0]))
+      .attr('cy', y(max_point[1]))
+      .attr('r', 5)
+      .attr('fill', 'red')
+      .on("mouseover", function(){
+        //Update the tooltip position and value
+        var tooltip = d3.select("#tooltip")
+                        .style("poisition", "absolute")
+                        .style("left", (d3.event.pageX+10) + "px")
+                        .style("top", (d3.event.pageY-10) + "px")
+        tooltip.append("p").text("Lag: " + max_point[0])
+        tooltip.append("p").text("Max-Coefficient: " + max_point[1].toFixed(4))
+        
+        //Show the tooltip
+        d3.select("#tooltip").classed("hidden", false);
+      })
+      .on("mouseout", function(){
+        $("#tooltip p").remove()
+        d3.select("#tooltip").classed("hidden", true);
+      })
+
 
   svg.append('svg:g')
       .attr('class', 'y axis')
@@ -65,7 +93,7 @@ function one_one_text_mode()
       .attr("text-anchor", "middle")  
       .style("font-size", "14px") 
       .style("text-decoration", "underline")  
-      .text('Cross Correlation between\"'+preview[0]['name']+'\" and \"'+preview[1]['name']+'\"');
+      .text('Cross Correlation between\"'+series_names[options['option_data1']]+'\" and \"'+series_names[options['option_data2']]+'\"');
 
   svg.append("text")
       .attr("text-anchor", "middle")  // this makes it easy to centre the text as the transform is applied to the anchor

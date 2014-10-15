@@ -28,7 +28,7 @@ function make_preview(drag_event)
   }
 
   preview = [];
-  options['option_data'].forEach(function(e){
+  selected_series_names.forEach(function(e){
     series = {
       'y_values':dataset.map(function(row){return row[e]}).slice(1).map(Number),
       'x_labels':x_labels,
@@ -37,7 +37,7 @@ function make_preview(drag_event)
     preview.push(series)
   })
 
-  // $("#preview").show()
+  preview.push()
   $("#preview_svg").remove();
   preview_draw()
 }
