@@ -59,6 +59,8 @@ function one_one_text_mode()
       .attr('cy', y(max_point[1]))
       .attr('r', 5)
       .attr('fill', 'red')
+      .attr('stroke', 'blue')
+      .attr('stroke-width', '1')
       .on("mouseover", function(){
         //Update the tooltip position and value
         var tooltip = d3.select("#tooltip")
