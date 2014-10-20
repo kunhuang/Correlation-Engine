@@ -121,32 +121,83 @@ function one_many_text_mode()
 }
 function one_many_graph_mode()
 {
-    $('<div id="result_graph"></div>').appendTo("#result")
-    $('#result_graph').highcharts({
-        chart: {
-            type: 'column'
-        },
-        title: {
-            text: 'Correlation with '+series_names[options['option_data1']]
-        },
-        xAxis: {
-            categories: selected_series_names
-        },
-        yAxis: {
-          min: -1, 
-          max: 1,
-        },
-        credits: {
-            enabled: false
-        },
-        series: [{
-            name: 'Correlation with '+series_names[options['option_data1']],
-            data: result.map(function(d){
-              if(d!='nan') return Number(d[0].toFixed(4));
-              else return null;
-            })
-        }]
-    })
+    //Width and height
+    var w = 800,
+        h = 400,
+        barPadding = 1,
+        m = {'top':50, 'bottom':50, 'left':50, 'right':50};
+      
+    //Scale
+    var x = d3.scale.ordinal().rangeRoundBands([m['left'], (w-m['right'])], .05);
+    var y = d3.scale.linear().range([m['bottom'], m['bottom']+(h-m['top']-m['bottom'])/2]);
+
+    var yAxisScale = d3.scale.ordinal()
+                 .rangePoints([m['bottom'], (h-m['top'])])
+                 .domain(d3.range(-1, 1.2, 0.2));
+
+    x.domain(selected_series_names.map(function(d) { return d; }));
+    y.domain([0, 1]);
+
+    //Create SVG element
+    var svg = d3.select("#result")
+          .append("div").attr("id", "result_graph")
+          .append("svg")
+          .attr("width", w)
+          .attr("height", h);
+
+    var xAxis = d3.svg.axis()
+                  .scale(x)
+                  .orient("bottom")
+                  .ticks(10);
+
+    var yAxis = d3.svg.axis()
+                  .scale(yAxisScale)
+                  .tickSize(5)
+                  .orient("left")
+                  .tickSubdivide(true);
+
+    svg.append('svg:g')
+      .attr('class', 'y axis')
+      .attr('transform', 'translate('+m['left']+',0)')
+      .call(yAxis);
+
+    svg.selectAll("rect")
+       .data(result)
+       .enter()
+       .append("rect")
+       .each(function(d, i){
+         d3.select(this)
+           .attr("x", function(d) {
+              return m['left'] + i * ((w-m['left']-m['right']) / result.length);
+           })
+           .attr("y", function(d) {
+            if(d == 'nan')
+              return m['bottom']+(h-m['top']-m['bottom'])/4
+            else
+            {
+              if(d[0]>0)
+                return m['bottom']+(h-m['top']-m['bottom'])/2 - y(d[0]);
+              else
+                return m['bottom']+(h-m['top']-m['bottom'])/2;
+            }
+           })
+           .attr("width", (w-m['left']-m['right']) / result.length - barPadding)
+           .attr("height", function(d){
+             if(d == 'nan')
+              return (h-m['top']-m['bottom'])/2;
+             else
+              return y(Math.abs(d[0]));
+           })
+           .attr("fill", function(d) {
+            if(d == 'nan')
+              return 'orange'
+            else{
+              if(d[0]>0) return 'green';
+              else return 'red'
+            }
+           });
+         }
+       )  
 }
 
 function many_many_text_mode()
