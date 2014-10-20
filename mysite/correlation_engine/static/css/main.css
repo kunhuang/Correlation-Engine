@@ -16,7 +16,9 @@
     fill: #c00;
   }
   #main {
-    margin: 5%;
+    margin-top: 55px;
+    margin-left: 5%;
+    margin-right: 5%;
   }
   .box {
     border-color: #ddd;

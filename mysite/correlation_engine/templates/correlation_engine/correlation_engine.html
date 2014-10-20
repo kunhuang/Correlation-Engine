@@ -23,134 +23,159 @@
   <script src="{{ STATIC_URL }}js/preview.js"></script>
   <script src="{{ STATIC_URL }}js/result.js"></script>
   <link rel="stylesheet" href="{{ STATIC_URL }}css/main.css" type="text/css">
-  
-  <div id="main" class="row">
-    <center><h1>Correlation Engine</h1></center>
-    
-    <div id="header" class="row">
-      <!-- OUTLINE -->
-      <div id="checkbox" class="col-md-12">
-        <center>
-          <label class="checkbox-inline">
-            <input type="checkbox" id="check_input_file" checked="true" onchange="check_input_file()"> Input Data File
-          </label>
-          <label class="checkbox-inline">
-            <input type="checkbox" id="check_option" checked="true"  onchange="check_option()"> Option
-          </label>
-          <label class="checkbox-inline">
-            <input type="checkbox" id="check_drop_area" checked="true"  onchange="check_drop_area()"> Drop Area
-          </label>
-          <label class="checkbox-inline">
-            <input type="checkbox" id="check_preview" checked="true"  onchange="check_preview()"> Preview
-          </label>
-          <label class="checkbox-inline">
-            <input type="checkbox" id="check_result" checked="true"  onchange="check_result()"> Result
-          </label>
-        </center>      
-      </div>
-    </div>
 
-    <!-- INPUT FILE-->
-    <div id="input" class="col-md-3">
-      <div id="input_file" class="box" style="height: 200px">
-        <!-- <h2>input file</h2> -->
-        <button type="button" class="btn btn-default btn-lg btn-block">Input Data File</button>
-        <br>
-        <input type="file" id="data_file" name="data_file" />
-        <p>(.csv file supported)</p>
-        <input type="button" id="upload" class="btn btn-info" value="upload" onclick="upload()" />
-      </div>
-      
-      <!-- PARSER -->
-      <!--   
-      <div id="parser">
-        <hr>
-        <h2>parse</h2>
-      
-      </div>
-      -->  
-      
-      <!-- OPTION -->
-      <div id="option" class="box" style="height: 800px">
-        <!-- <h2>option</h2> -->
-        <button type="button" class="btn btn-default btn-lg btn-block">Option</button>
-        <br>
-        <form class="form-horizontal" role="form">
-          <div class="form-group">
-            <label for="option_mode" class="col-sm-3 control-label">Mode</label>
-            <div class="col-sm-9">
-              <select class="form-control" name="" id="option_mode" onchange="change_mode(this.value)">
-                <option value="one_one">One vs One</option>
-                <option value="one_many">One vs Many</option>
-                <option value="many_many">Many vs Many</option>
-              </select>
-            </div>
-          </div>
-          <div class="form-group">
-            <label for="option_algorithm" class="col-sm-3 control-label">Algorithm</label>
-            <div class="col-sm-9">
-              <select class="form-control" name="" id="option_algorithm">
-                <option value="Pearson">Pearson</option>
-                <!-- <option value="Cross_Correlation">Cross Correlation</option> -->
-              </select>
-              <input type="checkbox" id="time_series_analysis">Time Series Analysis</input>
-            </div>
-          </div>          
-          <div class="form-group">
-            <label for="" class="col-sm-3 control-label">Data</label>
-            <div class="col-sm-9">
-              <select class="form-control" name="" id="option_data_mode" onchange="change_data_mode(this.value)">
-                <option value="data_by_column">Data by Column</option>
-                <option value="data_by_row">Data by Row</option>
-              </select>
-              <div id="option_data"></div>
-            <p>Use "Ctrl" or "Command" to select multiple item,</p>
-            <p>or drag&drop items to "Drop Area"(supported in Firefox 32.0.3)</p>
-            </div>
-          </div>
+  <div class="navbar navbar-inverse navbar-fixed-top" role="navigation">  
+    <div class="container-fluid">
+      <ul class="nav navbar-nav">
+        <li><a class="navbar-brand" href="#">Correlation Engine</a></li>
+        <li class="dropdown">
+          <a href="#" class="dropdown-toggle" data-toggle="dropdown">Help<span class="caret"></span></a>
+          <ul class="dropdown-menu" role="menu">
+            <li><a href="{{ STATIC_URL }}UserManual.pdf">User Manual</a></li>
+          </ul>
+        </li>
+        <li class="dropdown">
+          <a href="#" class="dropdown-toggle" data-toggle="dropdown">Layout<span class="caret"></span></a>
+          <ul class="dropdown-menu" role="menu">
+            <li>
+              <label class="checkbox-inline">
+                <input type="checkbox" id="check_input_file" checked="true" onchange="check_input_file()"> Input Data File
+              </label>
+            </li>
+            <li><label class="checkbox-inline">
+                <input type="checkbox" id="check_option" checked="true"  onchange="check_option()"> Option
+              </label>
+              </li>
+            <li>
+              <label class="checkbox-inline">
+                <input type="checkbox" id="check_drop_area" checked="true"  onchange="check_drop_area()"> Drop Area
+              </label>
+            </li>
+            <li>
+              <label class="checkbox-inline">
+                <input type="checkbox" id="check_preview" checked="true"  onchange="check_preview()"> Preview
+              </label>
+            </li>
+            <li>
+              <label class="checkbox-inline">
+                <input type="checkbox" id="check_result" checked="true"  onchange="check_result()"> Result
+              </label>
+            </li>
+          </ul>
+        </li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="container-fluid">
+    <div id="main" class="row">
+      <div id="header" class="row">
+        <!-- OUTLINE -->
+        <div id="checkbox" class="col-md-12">
           <center>
-          <input type="button" class="btn btn-info" value="preview" onclick="make_preview()">
-          <input type="button" class="btn btn-info" value="calculate" onclick="calculate()">
-        </center>
-        </form>
-      </div>
-    </div>
 
-    <div id="output" class="col-md-9">
-      <div class="row">
-        <!-- DROP AREA -->
-        <div class="col-md-3">
-          <div id="drop_area" class="box" style="height: 400px">
-            <!-- <h2>drop area</h2> -->
-            <button type="button" class="btn btn-default btn-lg btn-block">Drop Area</button>
-            <br>
-            <select id="selected_data" class="tagdiv form-control" name="taglist2" size=7 ondrop="drop(event)" ondragover="allowDrop(event)">
-                
-            </select>
-          </div>
-        </div>
-        <!-- PREVIEW -->
-        <div class="col-md-9">
-          <div id="preview" class="box" style="height: 400px">
-            <!-- <h2>preview</h2> -->
-            <button type="button" class="btn btn-default btn-lg btn-block">Preview</button>
-            <br>
-          </div>
+          </center>      
         </div>
       </div>
     
-      <!-- RESULT -->
-      <div class="row">
-        <div class="col-md-12">
-          <div id="result" class="box" style="height: 600px">
-            <!-- <h2>result</h2> -->
-            <button type="button" class="btn btn-default btn-lg btn-block">Result</button>
-            <br>
+      <!-- INPUT FILE-->
+      <div id="input" class="col-md-3">
+        <div id="input_file" class="box" style="height: 200px">
+          <!-- <h2>input file</h2> -->
+          <button type="button" class="btn btn-default btn-lg btn-block">Input Data File</button>
+          <br>
+          <input type="file" id="data_file" name="data_file" />
+          <p>(.csv file supported)</p>
+          <input type="button" id="upload" class="btn btn-info" value="upload" onclick="upload()" />
+        </div>
         
-<!--             <select id="mode" onchange="checkField(this.value)">
-              <option value="graph_mode">graph_mode</option>
-              <option value="text_mode">text_mode</option>
-            </select> -->
+        <!-- PARSER -->
+        <!--   
+        <div id="parser">
+          <hr>
+          <h2>parse</h2>
+        
+        </div>
+        -->  
+        
+        <!-- OPTION -->
+        <div id="option" class="box" style="height: 800px">
+          <!-- <h2>option</h2> -->
+          <button type="button" class="btn btn-default btn-lg btn-block">Option</button>
+          <br>
+          <form class="form-horizontal" role="form">
+            <div class="form-group">
+              <label for="option_mode" class="col-sm-3 control-label">Mode</label>
+              <div class="col-sm-9">
+                <select class="form-control" name="" id="option_mode" onchange="change_mode(this.value)">
+                  <option value="one_one">One vs One</option>
+                  <option value="one_many">One vs Many</option>
+                  <option value="many_many">Many vs Many</option>
+                </select>
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="option_algorithm" class="col-sm-3 control-label">Algorithm</label>
+              <div class="col-sm-9">
+                <select class="form-control" name="" id="option_algorithm">
+                  <option value="Pearson">Pearson</option>
+                  <!-- <option value="Cross_Correlation">Cross Correlation</option> -->
+                </select>
+                <input type="checkbox" id="time_series_analysis">Time Series Analysis</input>
+              </div>
+            </div>          
+            <div class="form-group">
+              <label for="" class="col-sm-3 control-label">Data</label>
+              <div class="col-sm-9">
+                <select class="form-control" name="" id="option_data_mode" onchange="change_data_mode(this.value)">
+                  <option value="data_by_column">Data by Column</option>
+                  <option value="data_by_row">Data by Row</option>
+                </select>
+                <div id="option_data"></div>
+              <p>Use "Ctrl" or "Command" to select multiple item,</p>
+              <p>or drag&drop items to "Drop Area"(supported in Firefox 32.0.3)</p>
+              </div>
+            </div>
+            <center>
+            <input type="button" class="btn btn-info" value="preview" onclick="make_preview()">
+            <input type="button" class="btn btn-info" value="calculate" onclick="calculate()">
+          </center>
+          </form>
+        </div>
+      </div>
+    
+      <div id="output" class="col-md-9">
+        <div class="row">
+          <!-- DROP AREA -->
+          <div class="col-md-3">
+            <div id="drop_area" class="box" style="height: 400px">
+              <!-- <h2>drop area</h2> -->
+              <button type="button" class="btn btn-default btn-lg btn-block">Drop Area</button>
+              <br>
+              <select id="selected_data" class="tagdiv form-control" name="taglist2" size=7 ondrop="drop(event)" ondragover="allowDrop(event)">
+                  
+              </select>
+            </div>
+          </div>
+          <!-- PREVIEW -->
+          <div class="col-md-9">
+            <div id="preview" class="box" style="height: 400px">
+              <!-- <h2>preview</h2> -->
+              <button type="button" class="btn btn-default btn-lg btn-block">Preview</button>
+              <br>
+            </div>
+          </div>
+        </div>
+      
+        <!-- RESULT -->
+        <div class="row">
+          <div class="col-md-12">
+            <div id="result" class="box" style="height: 600px">
+              <!-- <h2>result</h2> -->
+              <button type="button" class="btn btn-default btn-lg btn-block">Result</button>
+              <br>
+          
+            </div>
           </div>
         </div>
       </div>
