@@ -116,7 +116,6 @@ function one_one_text_mode()
 
 function one_many_text_mode()
 {
-
   // d3.select("#result").select("table").selectAll("tr").insert("td", "td").data(selected_series_names).enter().text(function(d){return d;})
 }
 function one_many_graph_mode()
@@ -140,7 +139,7 @@ function one_many_graph_mode()
             enabled: false
         },
         series: [{
-            name: 'Correlation with '+series_names[options['option_data1']],
+            name: 'Correlation with ' + series_names[options['option_data1']],
             data: result.map(function(d){
               if(d!='nan') return Number(d[0].toFixed(4));
               else return null;
