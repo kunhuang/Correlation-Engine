@@ -67,7 +67,7 @@ function preview_draw()
         },
         series: [{
             name: d['name'],
-            data: preview[0]['y_values'],
+            data: d['y_values'],
         }]
     });
   })
