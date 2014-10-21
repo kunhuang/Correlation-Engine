@@ -10,25 +10,25 @@ function make_preview(drag_event)
     if($('#option_mode').val() == 'many_many')
     {  
       options['option_data'] = $('#option_data>#data').val().map(Number)
-      selected_series_names = options['option_data']
+      selected_series = options['option_data']
     }
     else if(($('#option_mode').val() == 'one_many'))
     {
       options['option_data1'] = Number($('#option_data>#data1').val())  
       options['option_data2'] = $('#option_data>#data2').val().map(Number)
-      selected_series_names = options['option_data2']
-      selected_series_names.splice(0,0,options['option_data1'])
+      selected_series = options['option_data2']
+      selected_series.splice(0,0,options['option_data1'])
     }
     else
     {
       options['option_data1'] = Number($('#option_data>#data1').val())  
       options['option_data2'] = Number($('#option_data>#data2').val())
-      selected_series_names = [options['option_data1'], options['option_data2']]
+      selected_series = [options['option_data1'], options['option_data2']]
     }
   }
 
   preview = [];
-  selected_series_names.forEach(function(e){
+  selected_series.forEach(function(e){
     series = {
       'y_values':dataset.map(function(row){return row[e]}).slice(1).map(Number),
       'x_labels':x_labels,
