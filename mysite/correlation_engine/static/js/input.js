@@ -70,27 +70,33 @@ function upload()
 client.onreadystatechange = function() 
 {
   if(client.readyState == 4)
+  {  
     if(client.status == 200) 
     {
       // alert(client.statusText);
       var responseJSON = JSON.parse(client.responseText)
-      dataset = responseJSON
-      series_names = dataset[0]
-      x_labels = dataset.map(function(row){
-        return row[0]+','+row[1]
-      }).slice(1);
-      x_label_name = series_names[0]
-      $("#option_data_mode").val('data_by_column')
-      $("#option_mode").val('many_many')
-      change_mode('many_many')
-      $("#upload").val("upload")
-                  .removeClass("disabled");
-      alert("upload successfully!")
+      if(responseJSON['success'] == 0)
+        alert(responseJSON['reason'])
+      else
+      {  
+        dataset = responseJSON['content']
+        series_names = dataset[0]
+        x_labels = dataset.map(function(row){
+          return row[0]+','+row[1]
+        }).slice(1);
+        x_label_name = series_names[0]
+        $("#option_data_mode").val('data_by_column')
+        $("#option_mode").val('many_many')
+        change_mode('many_many')
+        alert("upload successfully!")
+      }
     }
     else
     {
       alert("try again!")
     }
+    $("#upload").val("upload").removeClass("disabled");
+  }
 }
 
 function one_one()

@@ -10,6 +10,8 @@ import json
 import numpy
 import pdb
 import math
+import xlrd
+import os
 
 file_directory = 'correlation_engine/file/'
 # converting the the correlation matrix result
@@ -30,6 +32,18 @@ def spec_convert(lst, dim = 2):
           lst[i] = str('nan')
   return lst
 
+def csv_from_excel(file_name):
+  wb = xlrd.open_workbook(file_name)
+  sh = wb.sheet_by_name('Sheet1')
+  csv_file = open(file_name[:file_name.rfind('.')]+'.csv', 'wb')
+  wr = csv.writer(csv_file, quoting=csv.QUOTE_NONE)
+
+  for rownum in xrange(sh.nrows):
+    wr.writerow(sh.row_values(rownum))
+
+  csv_file.close()
+  os.remove(file_name)
+
 def index(request):
   return render_to_response('correlation_engine/correlation_engine.html',  context_instance=RequestContext(request))
   
@@ -39,7 +53,10 @@ def option(request):
     f = request.FILES['data_file']
     
     client = request.META['REMOTE_ADDR']
-    file_type = '.csv'
+    file_type = f.name[f.name.rfind('.'):]
+
+    if file_type not in ['.csv', '.xlsx']:
+      return HttpResponse(json.dumps({'success':0, 'reason':'only csv and xlsx file are supported'}))
 
     myfile = open(file_directory+client+file_type, 'wb+')
     
@@ -47,15 +64,18 @@ def option(request):
       myfile.write(chunk)
     myfile.close()
 
-    myfile = open(file_directory+client+file_type, 'rU')
+    if file_type == '.xlsx':
+      csv_from_excel(file_directory+client+file_type)
+
+    myfile = open(file_directory+client+'.csv', 'rU')
     data_file = csv.reader(myfile, delimiter=',')
-      
+
     data = []
     for row in data_file:
       data.append(row)
     myfile.close()
 
-    return HttpResponse(json.dumps(data))
+    return HttpResponse(json.dumps({'success':1, 'content':data}))
 
 @csrf_exempt
 def calculate(request):
