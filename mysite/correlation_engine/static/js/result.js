@@ -250,9 +250,12 @@ function many_many_graph_mode()
   var svg = d3.select("#result")
           .append("div").attr("id", "result_graph")
           .append("svg")
+          .attr("id", "result-svg")
           .attr("width", w)
           .attr("height", h)
-          
+          .attr("viewBox", "0 0 " + w + " " + h)
+          .attr("perserveAspectRatio", "xMinYMid")
+       
   var background = svg.append("rect")
                       .classed("svg-background", true)
                       .attr('x', m['left'])
@@ -392,4 +395,17 @@ function many_many_graph_mode()
             .text("NaN")
             .attr("x", w - m['right']/1.5 + m['right']/4)
             .attr("y", legendy(legendRange.length-1)-2*legendy.rangeBand()+legendy.rangeBand()/2)
+
+
+
+  var chart = $("#result-svg"),
+    aspect = chart.width() / chart.height(),
+    container = chart.parent();
+
+  // make it responsive
+  $(window).on("resize", function() {
+    var targetWidth = container.width();
+    chart.attr("width", targetWidth);
+    chart.attr("height", Math.round(targetWidth / aspect));
+  }).trigger("resize");
 }

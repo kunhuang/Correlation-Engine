@@ -46,8 +46,9 @@ function preview_draw()
   $('<div id="preview_svg"></div>').appendTo('#preview')
   
   preview.forEach(function(d, i){
-    $('<div id="preview'+d['name']+'"></div>').appendTo('#preview_svg')
-    $('#preview'+d['name']).highcharts({
+
+    $('<div id="preview'+i+'"></div>').appendTo('#preview_svg')
+    $('#preview'+i).highcharts({
         title: {
             text: d['name'],
             x: -20 //center

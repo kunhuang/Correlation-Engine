@@ -90,7 +90,6 @@ def calculate(request):
       matrix = []
       for row in data:
         matrix.append(row)
-
       if(request.POST.get('option_data_mode') == 'data_by_row'):
         matrix = map(list, zip(*matrix))
 
@@ -100,8 +99,8 @@ def calculate(request):
           }
       myfile1.close()
       
-      index1 = map(int, request.POST.get('option_data1'))
-      index2 = map(int, request.POST.get('option_data2'))
+      index1 = int(request.POST.get('option_data1'))
+      index2 = int(request.POST.get('option_data2'))
     
       np_data1 = numpy.array(data['dataset'])[:,index1].astype(numpy.float)
       np_data2 = numpy.array(data['dataset'])[:,index2].astype(numpy.float)
@@ -114,11 +113,13 @@ def calculate(request):
 
         l = len(np_data1)
         result["max_correlation"] = 0
+        pdb.set_trace()
+      
         for i in range(-l+1, l-1):
           if i < 0:
-            correlation = pearsonr(np_data1[range(-i,l), :], np_data2[range(0, i+l),:])[0][0]
+            correlation = pearsonr(np_data1[range(-i,l), :], np_data2[range(0, i+l),:])[0]
           else:
-            correlation = pearsonr(np_data1[range(0,l-i), :], np_data2[range(i, l),:])[0][0]
+            correlation = pearsonr(np_data1[range(0,l-i), :], np_data2[range(i, l),:])[0]
 
           
           if(numpy.isnan(correlation) == True):
@@ -214,3 +215,5 @@ def upload_file(request):
       return HttpResponse(template.render(context))
     # return render_to_response('correlation_engine/input.html', context_instance=RequestContext(request))
     
+def sample_data(request):
+  pass
