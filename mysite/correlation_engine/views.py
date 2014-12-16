@@ -104,7 +104,6 @@ def calculate(request):
     
       np_data1 = numpy.array(data['dataset'])[:,index1].astype(numpy.float)
       np_data2 = numpy.array(data['dataset'])[:,index2].astype(numpy.float)
-      
       # Cross Correlation calculation for time series analysis
       if request.POST['time_series_analysis'] == 'true':
         result = {"cross_correlation":[],
@@ -113,8 +112,7 @@ def calculate(request):
 
         l = len(np_data1)
         result["max_correlation"] = 0
-        pdb.set_trace()
-      
+        
         for i in range(-l+1, l-1):
           if i < 0:
             correlation = pearsonr(np_data1[range(-i,l), :], np_data2[range(0, i+l),:])[0]

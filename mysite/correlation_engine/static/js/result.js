@@ -1,117 +1,28 @@
 function one_one_text_mode()
 {
-  var svg = d3.select("#result")
-                  .append("div").attr("id","result_graph")
-                  .append("svg").attr("id","result_graph")
-
-  var m = {'top':60, 'bottom':60, 'left':100, 'right':100},
-      w = 1000,
-      h = 300;
-
-  var x = d3.scale.linear().range([m['left'], w - m['right']]);
-  x.domain([d3.min(result['cross_correlation'], function(d){return d[0]}),
-            d3.max(result['cross_correlation'], function(d){return d[0]})])
-
-  var xAxisScale = d3.scale.ordinal().rangePoints([m['left'], w - m['right']])
-
-  var y = d3.scale.linear().range([h - m['top'], m['bottom']]);
-  y.domain([-1, 1])
-  // y.domain([d3.min(result['cross_correlation'], function(d){return d[1]}),
-  //           d3.max(result['cross_correlation'], function(d){return d[1]})])
-  
-  xAxisScale.domain(result['cross_correlation'], function(d){return d[0]})
-
-  xAxis = d3.svg.axis()
-      .scale(x)
-      .tickSize(5)
-      .tickSubdivide(true),
-
-  yAxis = d3.svg.axis()
-      .scale(y)
-      .tickSize(5)
-      .orient("left")
-      .tickSubdivide(true);
-
-  // A line generator, for the dark stroke.
-  var line = d3.svg.line()
-      .x(function(d) { return x(d[0]); })
-      .y(function(d) { return y(d[1]); })
-      .interpolate("linear");
-
-  svg.attr("width", w)
-     .attr("height", h)
-     .append('path')
-      .attr("d", function(d) {     
-        return line(result['cross_correlation']) 
-      })
-      .attr("stroke", "blue")
-      .attr("stroke-width", 2)
-      .attr("fill", "none");
-  // hightlight the max correlation coefficient
-  var max_point;
-  result['cross_correlation'].forEach(function(d, i){
-    if(d[0] == result['lag'])
-      max_point = [d[0], d[1]]
-  })
-
-  svg.append('svg:circle')
-      .attr('cx', x(max_point[0]))
-      .attr('cy', y(max_point[1]))
-      .attr('r', 5)
-      .attr('fill', 'red')
-      .attr('stroke', 'blue')
-      .attr('stroke-width', '1')
-      .on("mouseover", function(){
-        //Update the tooltip position and value
-        var tooltip = d3.select("#tooltip")
-                        .style("poisition", "absolute")
-                        .style("left", (d3.event.pageX+10) + "px")
-                        .style("top", (d3.event.pageY-10) + "px")
-        tooltip.append("p").text("Lag: " + max_point[0])
-        tooltip.append("p").text("Max-Coefficient: " + max_point[1].toFixed(4))
-        
-        //Show the tooltip
-        d3.select("#tooltip").classed("hidden", false);
-      })
-      .on("mouseout", function(){
-        $("#tooltip p").remove()
-        d3.select("#tooltip").classed("hidden", true);
-      })
-
-
-  svg.append('svg:g')
-      .attr('class', 'y axis')
-      .attr('transform', 'translate(' + (m['left']) + ',0)')
-      .call(yAxis);
-
-  svg.append('svg:g')
-      .attr('class', 'x axis')
-      .attr('transform', 'translate(0,' + (h - m['bottom']) + ')')
-      .call(xAxis);
-
-  svg.append("text")
-      .attr("x", (w / 2))             
-      .attr("y", (m['top']/2))
-      .attr("text-anchor", "middle")  
-      .style("font-size", "14px") 
-      .style("text-decoration", "underline")  
-      .text('Cross Correlation between\"'+series_names[options['option_data1']]+'\" and \"'+series_names[options['option_data2']]+'\"');
-
-  svg.append("text")
-      .attr("text-anchor", "middle")  // this makes it easy to centre the text as the transform is applied to the anchor
-      .attr("transform", "translate("+ (m['left']/2) +","+(h/2)+")rotate(-90)")  // text is drawn off the screen top left, move down and out and rotate
-      .text("Correlation");
-
-  svg.append("text")
-      .attr("text-anchor", "middle")  // this makes it easy to centre the text as the transform is applied to the anchor
-      .attr("transform", "translate("+ (w/2) +","+(h-(m['bottom']/3))+")")  // centre below axis
-      .text("Lag");
-
-  svg.append("text")
-      .attr("text-anchor", "middle")  // this makes it easy to centre the text as the transform is applied to the anchor
-      .attr("transform", "translate("+ (w/2) +","+h+")")  // centre below axis
-      .text("Max Correlation:" + result['max_correlation'].toFixed(4) + "; Lag:" + result['lag']);
-
+  $('<div id="result_graph"></div>').appendTo("#result")
+    $('#result_graph').highcharts({
+        title: {
+            text: 'Cross Correlation'
+        },
+        xAxis: {
+            title: { text: 'Lag'},
+        },
+        yAxis: {
+          min: -1, 
+          max: 1,
+        },
+        credits: {
+            enabled: false
+        },
+        series: [{
+            name: 'Cross Correlation',
+            data: result['cross_correlation'].map(function(d){
+              if(d!='nan') return [Number(d[0]), Number(d[1].toFixed(4))];
+              else return null;
+            })
+        }]
+    })
 }
 
 function one_many_text_mode()
