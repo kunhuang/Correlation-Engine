@@ -118,11 +118,15 @@ def calculate(request):
         
         for i in range(-l+1, l-1):
           if i < 0:
-            correlation = pearsonr(np_data1[range(-i,l), :], np_data2[range(0, i+l),:])[0]
+            if numpy.__version__ != '1.9.0':
+              correlation = pearsonr(np_data1[range(-i,l), :], np_data2[range(0, i+l),:])[0]
+            else:
+              correlation = pearsonr(np_data1[range(-i,l)], np_data2[range(0, i+l)])[0]  
           else:
-            correlation = pearsonr(np_data1[range(0,l-i), :], np_data2[range(i, l),:])[0]
-
-          
+            if numpy.__version__ != '1.9.0':
+              correlation = pearsonr(np_data1[range(0,l-i), :], np_data2[range(i, l),:])[0]
+            else:
+              correlation = pearsonr(np_data1[range(0,l-i)], np_data2[range(i, l)])[0]
           if(numpy.isnan(correlation) == True):
             correlation = 0
       
