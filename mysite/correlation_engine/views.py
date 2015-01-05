@@ -5,6 +5,9 @@ from django import forms
 from django.template import RequestContext, loader
 from django.views.decorators.csrf import csrf_exempt
 from scipy.stats.stats import pearsonr
+from django.utils.encoding import smart_str
+from django.core.servers.basehttp import FileWrapper
+
 import csv
 import json
 import numpy
@@ -127,7 +130,12 @@ def calculate(request):
             result["max_correlation"] = abs(correlation)
             result["lag"] = i
           result['cross_correlation'].append([i, correlation])
-        
+
+        result_file = open(file_directory+client+'_result.csv', 'w')
+        writer = csv.writer(result_file)
+        writer.writerow(['lag', 'correlation'])
+        writer.writerows(result['cross_correlation'])
+
       return HttpResponse(json.dumps(result))
     elif request.POST['option_mode'] == 'one_many':
       myfile1 = open(file_directory+client+file_type, 'rU')
@@ -185,6 +193,11 @@ def calculate(request):
       result = result.tolist()
       result = spec_convert(result)
       # result = [[[0.6, 0.5], [-.3, 0.1]], [[0.6, 0.5], [-.3, 0.1]]];
+
+    result_file = open(file_directory+client+'_result.csv', 'w')
+    writer = csv.writer(result_file)
+    writer.writerows([e for e in result])
+
     return HttpResponse(json.dumps(result))
   else:
     return HttpResponse('fail')
@@ -194,7 +207,7 @@ def upload_file(request):
     if request.method == 'POST':
       f = request.FILES['data_file']
       myfile = open(file_directory+client+file_type, 'wb+')
-            
+
       for chunk in f.chunks():
         myfile.write(chunk)
       myfile.close()
@@ -213,5 +226,17 @@ def upload_file(request):
       return HttpResponse(template.render(context))
     # return render_to_response('correlation_engine/input.html', context_instance=RequestContext(request))
     
+def download(request):
+    client = request.META['REMOTE_ADDR']
+    result_file = file_directory+client+'_result.csv'
+    try:
+        response = HttpResponse(FileWrapper(open(result_file)), content_type='application/force-download')
+        response['Content-Disposition'] = 'attachment; filename=%s' % smart_str('result.csv')
+        # It's usually a good idea to set the 'Content-Length' header too.
+        # You can also set any other required headers: Cache-Control, etc.
+        return response
+    except:
+        return HttpResponse('fail')
+
 def sample_data(request):
   pass

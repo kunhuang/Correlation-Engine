@@ -8,4 +8,5 @@ urlpatterns = patterns('',
   url(r'^calculate/$', views.calculate, name='calculate'),
   url(r'^upload_file/$', views.upload_file, name='upload_file'),
   url(r'^sample_data/$', views.sample_data, name='sample_data'),
+  url(r'^download/$', views.download, name='download'),
 )

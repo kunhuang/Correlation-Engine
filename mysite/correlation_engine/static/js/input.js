@@ -237,6 +237,7 @@ function calculate(drag_event)
       many_many_graph_mode();
       // many_many_text_mode();
     }
+    $("#download_result").show()
   });
 }
 
